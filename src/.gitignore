@@ -1,5 +1,6 @@
 # Ignore Terraform files
-.terraform/
+.terraform
+.terraform.lock.hcl
 *.tfstate
 *.tfstate.backup
 
