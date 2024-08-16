@@ -2,7 +2,7 @@
 variable "cidr" {
   description = "The cidr of the vpc"
   type        = string
-  default = "10.0.0.0/16"
+  default     = "10.0.0.0/16"
 }
 //this is about 65000 ips//
 variable "aws_region" {
@@ -41,11 +41,11 @@ variable "instance_type" {
 variable "ami" {
   description = "The AMI ID to use for EC2 instances"
   type        = string
-  default = "ami-04a81a99f5ec58529"
+  default     = "ami-04a81a99f5ec58529"
 }
 
 variable "project" {
   description = "The name of the project"
   type        = string
-  default = "terraform project"
+  default     = "terraform project"
 }

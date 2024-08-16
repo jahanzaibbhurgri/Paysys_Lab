@@ -30,7 +30,7 @@ output "nat_gateways_ids" {
   value = module.nat-gateway.nat_gateways_ids
 }
 
-output internet_gateway_ids {
+output "internet_gateway_ids" {
   value = module.network.internet_gateway_ids
 }
 output "key_name" {

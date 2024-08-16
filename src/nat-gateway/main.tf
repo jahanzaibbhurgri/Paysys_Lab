@@ -2,7 +2,7 @@
 
 resource "aws_eip" "eip" {
   depends_on = [var.internet_gateway_ids]
-  count = length(var.subnets_ids)
+  count      = length(var.subnets_ids)
 }
 
 resource "aws_nat_gateway" "nat" {

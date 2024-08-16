@@ -23,8 +23,8 @@ variable "private_route_table_name" {
   default = "private-route-table"
 }
 
-variable "internet_gateway_ids"{
-  type    = string
+variable "internet_gateway_ids" {
+  type = string
 
 }
 

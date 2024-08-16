@@ -12,8 +12,8 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table" "private" {
-  count   = length(var.nat_gateways_ids)
-  vpc_id  = var.vpc_id
+  count  = length(var.nat_gateways_ids)
+  vpc_id = var.vpc_id
   route {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = var.nat_gateways_ids[count.index]
@@ -26,15 +26,15 @@ resource "aws_route_table" "private" {
 
 #route table assiociation
 resource "aws_route_table_association" "public_associations" {
-  count         = length(var.public_subnet_ids)
-  subnet_id     = var.public_subnet_ids[count.index]
+  count          = length(var.public_subnet_ids)
+  subnet_id      = var.public_subnet_ids[count.index]
   route_table_id = aws_route_table.public.id
 }
 
 
 
 resource "aws_route_table_association" "private_associations" {
-  count         = length(var.private_subnet_ids)
-  subnet_id     = var.private_subnet_ids[count.index]
+  count          = length(var.private_subnet_ids)
+  subnet_id      = var.private_subnet_ids[count.index]
   route_table_id = aws_route_table.private[count.index].id
 }

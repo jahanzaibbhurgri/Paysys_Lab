@@ -9,7 +9,7 @@ resource "aws_key_pair" "my_key_pair" {
 }
 
 resource "local_file" "private_key" {
-  content  = tls_private_key.key.private_key_pem
-  filename = "./private_key.pem"
+  content         = tls_private_key.key.private_key_pem
+  filename        = "./private_key.pem"
   file_permission = "0600"
 }

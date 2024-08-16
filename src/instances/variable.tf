@@ -29,7 +29,7 @@ variable "key_name" {
 }
 
 variable "user_data" {
-  type = string
+  type    = string
   default = <<-EOF
               #!/bin/bash
               sudo yum install nginx -y
