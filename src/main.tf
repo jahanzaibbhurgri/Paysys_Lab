@@ -2,6 +2,14 @@ provider "aws" {
   region = var.aws_region
 }
 
+
+module "s3" {
+  source = "./simpleservicestorage"
+}
+
+module "dynamodb" {
+  source = "./dynamodb"
+}
 module "vpc" {
   source  = "./vpc"
   cidr    = var.cidr
@@ -60,3 +68,17 @@ module "network" {
   source = "./network"
   vpc_id = module.vpc.vpc_ids
 }
+
+
+/*
+terraform {
+  backend "s3" {
+    bucket         = "jahanzaib"
+    key            = "jahanzaib/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-lock"
+  }
+}
+*/
+//first create the resources and then uncomment it and then apply the terraform apply 
+//it will apply the lock if someone is locking so it would make that person to wait until or unless that person execution is done
