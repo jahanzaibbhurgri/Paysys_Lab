@@ -1,3 +1,4 @@
+//main.tf//
 #creating the role
 resource "aws_iam_role" "eks_cluster" {
   name               = "eks-cluster-role"

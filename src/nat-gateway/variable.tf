@@ -1,3 +1,4 @@
+//nat-gateway variable//
 variable "vpc_id" {
   type = string
 }

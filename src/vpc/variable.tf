@@ -1,3 +1,5 @@
+#vpc variable
+
 variable "cidr" {
   type = string
 }

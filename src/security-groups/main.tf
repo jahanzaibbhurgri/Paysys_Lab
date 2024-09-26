@@ -1,4 +1,5 @@
-# security-groups/main.tf
+// sg-main.tf //
+//task1//
 resource "aws_security_group" "public" {
   vpc_id = var.vpc_id
 

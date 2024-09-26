@@ -1,4 +1,4 @@
-
+//natewgateway//
 
 resource "aws_eip" "eip" {
   depends_on = [var.internet_gateway_ids]

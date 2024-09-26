@@ -1,3 +1,4 @@
+#variable subnet
 variable "vpc_id" {
   type = string
 }
