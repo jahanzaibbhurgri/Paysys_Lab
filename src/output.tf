@@ -18,13 +18,13 @@ output "private_sg_ids" {
 }
 
 
-output "nginx_instance_ids" {
-  value = module.instances.nginx_instance_ids
-}
+# output "nginx_instance_ids" {
+#   value = module.instances.nginx_instance_ids
+# }
 
-output "private_instance_ids" {
-  value = module.instances.private_instance_ids
-}
+# output "private_instance_ids" {
+#   value = module.instances.private_instance_ids
+# }
 
 output "nat_gateways_ids" {
   value = module.nat-gateway.nat_gateways_ids
