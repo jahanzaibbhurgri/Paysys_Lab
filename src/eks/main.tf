@@ -1,5 +1,5 @@
 //main.tf//
-#creating the role
+
 resource "aws_iam_role" "eks_cluster" {
   name               = "eks-cluster-role"
   assume_role_policy = <<POLICY
@@ -23,11 +23,13 @@ resource "aws_iam_role_policy_attachment" "amazon_eks_cluster_policy" {
   role       = aws_iam_role.eks_cluster.name
 }
 
+#2.2 Deploy the kubernetes using the terraform
+
 resource "aws_eks_cluster" "eks" {
 
   name = "eks"
   role_arn = aws_iam_role.eks_cluster.arn
-  version = "1.24" #do check for latest
+  version = "1.24" 
   vpc_config {
 	endpoint_private_access = false
         endpoint_public_access = true 
@@ -45,9 +47,9 @@ resource "aws_eks_cluster" "eks" {
   ]
 }
 
-//eks-worker-nodes
+//this is the scripting task 
+#2.3 scripting task
 
-# role created
 resource "aws_iam_role" "nodes_general" {
   name               = "eks-node-group-general"
   assume_role_policy = <<POLICY
@@ -65,6 +67,9 @@ resource "aws_iam_role" "nodes_general" {
 }
 POLICY
 }
+
+#2.3 Script(s) that create the infrastructure and deploy the application.
+
 
 data "template_file" "user_data" {
   template = <<EOF
@@ -109,10 +114,11 @@ done
 EOF
 }
 
-# Create a launch template
+//configured the template and attached the scripting task this template so whenever the worker node is initalized so this script would
+//automatically be deployed to the workernodes and i have attached the template to the worker node
 resource "aws_launch_template" "eks_worker_nodes" {
   name_prefix   = "eks-worker-nodes-"
-  image_id      = "ami-04a81a99f5ec58529"  # Replace with the appropriate AMI ID
+  image_id      = "ami-04a81a99f5ec58529" 
   instance_type = "t3.small"
 
   user_data = data.template_file.user_data.rendered
@@ -127,7 +133,7 @@ resource "aws_launch_template" "eks_worker_nodes" {
 }
 
 
-#3 polices are attached to the worker nodes
+
 resource "aws_iam_role_policy_attachment" "amazon_eks_worker_node_policy_general" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   role       = aws_iam_role.nodes_general.name
@@ -142,12 +148,9 @@ resource "aws_iam_role_policy_attachment" "amazon_ec2_container_registry_read_on
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
   role       = aws_iam_role.nodes_general.name
 }
-/*
-AmazonEKSWorkerNodePolicy: This policy is necessary for EKS worker nodes to communicate with the EKS control plane.
-AmazonEKS_CNI_Policy: This policy is required for the Amazon VPC CNI plugin, which allows pods to get IP addresses from the VPC.
-AmazonEC2ContainerRegistryReadOnly: This policy allows nodes to pull container images from Amazon ECR. It's a valid policy for EKS nodes.
-*/
 
+
+//configured the worker nodes in the private subnet //
 
 resource "aws_eks_node_group" "nodes_general" {
   cluster_name    = aws_eks_cluster.eks.name
@@ -155,9 +158,8 @@ resource "aws_eks_node_group" "nodes_general" {
   node_role_arn   = aws_iam_role.nodes_general.arn
   subnet_ids      = [
     var.private_subnet_ids[0], 
-    var.private_subnet_ids[1], // using the worker nodes to deploy on the private subnet 
+    var.private_subnet_ids[1], 
   ]
-  // will deploy the load balancer on the public subnet //
 
   scaling_config {
     desired_size = 1
@@ -170,12 +172,12 @@ resource "aws_eks_node_group" "nodes_general" {
     version = "$Latest"
   }
   
-  // capacity type can be ON_DEMAND or SPOT
+
   capacity_type = "ON_DEMAND"
   
   disk_size     = 20
   
-  // Ensure the correct use of instance types
+
   instance_types = ["t3.small"]
 
   
@@ -183,15 +185,15 @@ resource "aws_eks_node_group" "nodes_general" {
     role = "nodes-general"
   }
   
-  // Specify the version for the node group if needed
-  version = "1.24"  // You might want to specify a version or leave it blank for the latest
+  
+  version = "1.24"  
 
   update_config {
     max_unavailable = 1
   }
   
 
-  // Ensure that IAM Role permissions are created before the EKS Node Group handling
+
   depends_on = [
     aws_iam_role_policy_attachment.amazon_eks_worker_node_policy_general,
     aws_iam_role_policy_attachment.amazon_eks_cni_policy_general,
@@ -200,7 +202,17 @@ resource "aws_eks_node_group" "nodes_general" {
 }
 
 
-#now deploying the nginx application through the terraform
+
+
+/*
+2.2 Set up a Load Balancer and configure it to expose the application on port 80.
+•
+2.2 Deploy the web application (a simple Nginx or similar container) into the Kubernetes cluster.
+*/
+
+//so in this i have configured the i have deployed the nginx pod with two services(one for public load balancer and other one as a private loadbalancer)
+//which is exposed on the port 80 pod as well as the services is exposed on the port 80//
+
 provider "kubernetes" {
   host                   = aws_eks_cluster.eks.endpoint
   token                  = data.aws_eks_cluster_auth.cluster.token
